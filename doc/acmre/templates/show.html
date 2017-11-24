@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show the information</title>
+    <style>
+        body{
+            background: #495A80;
+            text-align: center;
+        }
+        .a2015{
+        display: table-row;
+        }
+        .a2016{
+        display: table-row;
+        }
+        .a2017{
+        display: table-row;
+        }
+        .warpper{
+            min-height: 500px;
+        }
+        tr{
+            border-bottom:1px solid #fff ;
+        }
+        table{
+            margin: 0 auto;
+        }
+    </style>
+    <script>
+        function dis() {
+
+            var  myselect=document.getElementById("sel")
+
+            var index=myselect.selectedIndex              // selectedIndex代表的是你所选中项的index
+
+            var Val=myselect.options[index].value
+            if(Val==0)
+                all()
+            else if(Val==1)
+                show2015()
+            else if(Val==2)
+                show2016()
+            else if(Val==3)
+                show2017()
+        }
+        function all(){
+            var a2015=document.getElementsByClassName('a2015')
+            var a2016=document.getElementsByClassName('a2016')
+            var a2017=document.getElementsByClassName('a2017')
+            for (var i = 0; i<a2015.length;i++) {
+                a2015[i].style.display="table-row";
+                };
+            for (var i = 0; i<a2016.length;i++) {
+                a2016[i].style.display="table-row";
+                };
+            for (var i = 0; i<a2017.length;i++) {
+                a2017[i].style.display="table-row";
+                };
+
+        }
+        function show2015(){
+            var a2015=document.getElementsByClassName('a2015')
+            var a2016=document.getElementsByClassName('a2016')
+            var a2017=document.getElementsByClassName('a2017')
+           for (var i = 0; i<a2015.length;i++) {
+                a2015[i].style.display="table-row";
+                };
+            for (var i = 0; i<a2016.length;i++) {
+                a2016[i].style.display="none";
+                };
+            for (var i = 0; i<a2017.length;i++) {
+                a2017[i].style.display="table-row";
+                };
+        }
+        function show2016(){
+            var a2015=document.getElementsByClassName('a2015')
+            var a2016=document.getElementsByClassName('a2016')
+            var a2017=document.getElementsByClassName('a2017')
+           for (var i = 0; i<a2015.length;i++) {
+                a2015[i].style.display="none";
+                };
+            for (var i = 0; i<a2016.length;i++) {
+                a2016[i].style.display="table-row";
+                };
+            for (var i = 0; i<a2017.length;i++) {
+                a2017[i].style.display="none";
+                };
+        }
+        function show2017(){
+            var a2015=document.getElementsByClassName('a2015')
+            var a2016=document.getElementsByClassName('a2016')
+            var a2017=document.getElementsByClassName('a2017')
+           for (var i = 0; i<a2015.length;i++) {
+                a2015[i].style.display="none";
+                };
+            for (var i = 0; i<a2016.length;i++) {
+                a2016[i].style.display="none";
+                };
+            for (var i = 0; i<a2017.length;i++) {
+                a2017[i].style.display="table-row";
+                };
+        }
+    </script>
+</head>
+<body>
+<select onchange="dis()" id="sel">
+    <option value="0">all</option>
+    <option value="1">2015</option>
+    <option value="2">2016</option>
+    <option value="3">2017</option>
+</select>
+<br>
+做题情况反馈
+<div class="warpper">
+
+
+<table width="85%" border="0" cellspacing="1" cellpadding="4" bgcolor="#cccccc" class="tabtop13"  >
+    <tr>
+        <td>学号</td>
+        <td>姓名</td>
+        <td>128平台</td>
+        <td>hdu</td>
+        <td>voj</td>
+        <td>codeforce Rank</td>
+    </tr>
+    {% for x in allInformation%}
+        <tr class="{{ 'a'+x[0][0:4]}}"> <td> {{ x[0] }}</td><td>{{ x[1] }}</td><td>{{ x[3] }}</td><td>{{ x[5] }}</td><td>{{ x[7] }}</td><td>{{ x[9] }}</td>
+            </tr>
+    {% endfor %}
+</table>
+</div>
+<input type="button" value = "添加" onclick="location.href='./add'">
+</body>
+</html>
