@@ -1,0 +1,44 @@
+import requests
+import hashlib
+import re
+from bs4 import BeautifulSoup
+
+url = "http://210.30.1.114:8089/Self/nav_login"   #  登录界面
+urly = "http://210.30.1.114:8089/Self/RandomCodeAction.action"  #验证码get
+url1 = "http://210.30.1.114:8089/Self/LoginAction.action"  #登录post请求
+urlans = "http://210.30.1.114:8089/Self/nav_getUserInfo"
+
+
+stunum = input("输入学号：")
+pwd = input("输入密码：")
+
+#将密码进行md5加密
+tmp = hashlib.md5()
+tmp.update(pwd.encode("utf-8"))
+pwd=tmp.hexdigest()
+
+#首先get请求登录界面保存cookie，得到checkcode
+first = requests.get(url)
+cookie = first.cookies
+text = first.text
+pattern = re.compile(r'var checkcode="(\d+)"')
+match = pattern.search(text)
+checkcode = match.group(1)
+
+yanzheng = requests.get(url=urly,params={"randomNum":0.2197510044161448},cookies=cookie) # 所得cookie请求验证页面
+
+logind={
+    "account":stunum,
+    "password":pwd,
+    "code":'',
+    "checkcode":checkcode,
+    "Submit":"登 录"
+}
+
+
+denglu = requests.post(url1,data=logind,cookies=cookie)
+getnum = requests.post(urlans,cookies=cookie)
+
+soup = BeautifulSoup(getnum.text,"html.parser")
+ans = soup.findAll(name = "td",attrs={"class":"t_r1"})
+print(ans[2].string.strip()+'G')
