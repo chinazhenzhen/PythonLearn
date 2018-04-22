@@ -1,0 +1,98 @@
+数据库事务
+数据库事务transanction正确执行的四个基本要素。ACID,原子性(Atomicity)、一致性(Correspondence)、隔离性(Isolation)、持久性(Durability)。
+原子性:整个事务中的所有操作，要么全部完成，要么全部不完成，不可能停滞在中间某个环节。事务在执行过程中发生错误，会被回滚（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样。
+一致性:在事务开始之前和事务结束以后，数据库的完整性约束没有被破坏。
+隔离性:隔离状态执行事务，使它们好像是系统在给定时间内执行的唯一操作。如果有两个事务，运行在相同的时间内，执行 相同的功能，事务的隔离性将确保每一事务在系统中认为只有该事务在使用系统。这种属性有时称为串行化，为了防止事务操作间的混淆，必须串行化或序列化请 求，使得在同一时间仅有一个请求用于同一数据。
+持久性:在事务完成以后，该事务所对数据库所作的更改便持久的保存在数据库之中，并不会被回滚。
+
+视图的作用，视图可以更改么？
+视图是虚拟的表，与包含数据的表不一样，视图只包含使用时动态检索数据的查询；不包含任何列或数据。使用视图可以简化复杂的sql操作，隐藏具体的细节，保护数据；视图创建后，可以使用与表相同的方式利用它们。
+视图不能被索引，也不能有关联的触发器或默认值，如果视图本身内有order by 则对视图再次order by将被覆盖。
+创建视图：create view XXX as XXXXXXXXXXXXXX;
+对于某些视图比如未使用联结子查询分组聚集函数Distinct Union等，是可以对其更新的，对视图的更新将对基表进行更新；但是视图主要用于简化检索，保护数据，并不用于更新，而且大部分视图都不可以更新。
+
+数据库索引
+是数据库管理系统中一个排序的数据结构，以协助快速查询、更新数据库表中数据。（实现原理B树，B+树）
+缺点：为表设置索引要付出代价的：一是增加了数据库的存储空间，二是在插入和修改数据时要花费较多的时间(因为索引也要随之变动)。
+创建索引可以大大提高系统的性能。
+第一，通过创建唯一性索引，可以保证数据库表中每一行数据的唯一性。
+第二，可以大大加快数据的检索速度，这也是创建索引的最主要的原因。
+第三，可以加速表和表之间的连接，特别是在实现数据的参考完整性方面特别有意义。
+第四，在使用分组和排序子句进行数据检索时，同样可以显著减少查询中分组和排序的时间。
+第五，通过使用索引，可以在查询的过程中，使用优化隐藏器，提高系统的性能。
+仔细分析缺点：
+第一，创建索引和维护索引要耗费时间，这种时间随着数据量的增加而增加。
+第二，索引需要占物理空间，除了数据表占数据空间之外，每一个索引还要占一定的物理空间，如果要建立聚簇索引，那么需要的空间就会更大。
+第三，当对表中的数据进行增加、删除和修改的时候，索引也要动态的维护，这样就降低了数据的维护速度。
+什么情况下使用索引：
+1.搜索：在经常需要搜索的列上，可以加快搜索的速度；
+2.主键：在作为主键的列上，强制该列的唯一性和组织表中数据的排列结构；
+3.外键：在经常用在连接的列上，这些列主要是一些外键，可以加快连接的速度；
+4.排序：在经常需要排序的列上创建索引，因为索引已经排序，这样查询可以利用索引的排序，加快排序查询时间；
+5.筛选：在经常使用在WHERE子句中的列上面创建索引，加快条件的判断速度。
+什么情况下不使用索引：
+1.表记录太少
+2.经常插入、删除、修改的表
+3.数据重复且分布平均的表字段
+4.经常和主字段一块查询但主字段索引值比较多的表字段
+三种索引：唯一索引、主键索引和聚集索引。(非聚集索引存的是指针（查询慢修改快），聚集索引在叶子节点存的真实数据（查询快修改慢）)
+索引创建的语句：
+ALTER TABLE用来创建普通索引、UNIQUE索引或PRIMARY KEY索引
+ALTER TABLE table_name ADD INDEX index_name (column_list列名)
+ALTER TABLE table_name ADD UNIQUE (column_list)
+ALTER TABLE table_name ADD PRIMARY KEY (column_list)
+CREATE INDEX可对表增加普通索引或UNIQUE索引。
+CREATE INDEX index_name ON table_name (column_list)
+CREATE UNIQUE INDEX index_name ON table_name (column_list)
+删除索引
+DROP INDEX index_name ON talbe_name
+查看索引
+show index from tblname
+
+mysql查询语句
+查询student表中每个department有多少人 group by
+SELECT department, COUNT(id) FROM student GROUP BY department;
+
+查询score表中每个人，得出最高成绩 group by
+SELECT c_name,MAX(grade) FROM score GROUP BY c_name;
+
+链接查询
+计算每个学生的总成绩 
+SELECT student.id,student.name,SUM(score.grade) FROM student,score
+->WHERE student.id=score.stu_id
+-> GROUP BY id;
+
+计算每个考试科目的平均成绩
+SELECT xueke_name,AVG(grade) FROM score GROUP BY xueke_name;
+
+查询 计算机 成绩低于95 的学生信息
+SELECT * FROM student
+    -> WHERE id IN
+    -> (SELECT stu_id FROM score
+    -> WHERE c_name="计算机" and grade<95);
+
+将计算机考试 成绩(grade) 按从高到低进行排序(排序)
+SELECT stu_id,grade
+    -> FROM score WHERE c_name='计算机'
+    ->  ORDER BY grade DESC;DESC从高到底，ASC从低到高
+
+模糊查询(查询姓张或者姓王的同学的姓名、院系和考试科目及成绩)
+SELECT student.id, student.name,student.sex,student.birth,score.c_name,score.grade
+    -> FROM student, score
+    -> WHERE
+    ->  (student.name LIKE  '张%'  OR student.name LIKE  '王%')
+    ->  AND
+    ->  student.id=score.stu_id ;
+
+
+
+数据库优化思路
+1.SQL语句优化（尽量避免在 where 子句中使用!=或<>操作符，尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃索引而进行全局扫描）
+2.索引优化
+3.数据库结构优化（垂直拆分和水平拆分）
+4.服务器硬件优化（花钱买好得设备）
+
+
+
+
+
