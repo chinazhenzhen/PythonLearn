@@ -1,3 +1,21 @@
+
+'''
+二分查找
+'''
+def bin_search(data_set,val):
+    #low 和high代表下标 最小下标，最大下标
+    low=0
+    high=len(data_set)-1
+    while low <=high:# 只有当low小于High的时候证明中间有数
+        mid=(low+high)//2
+        if data_set[mid]==val:
+            return mid  #返回他的下标
+        elif data_set[mid]>val:
+            high=mid-1
+        else:
+            low=mid+1
+    return # return null证明没有找到
+
 '''
 集合论set的使用
 set是可变类型，不可散列

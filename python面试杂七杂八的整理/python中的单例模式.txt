@@ -1,0 +1,61 @@
+单例模式：
+简介：该模式的主要目的是确保某一个类只有一个实例存在。
+当你希望在整个系统中，某个类只能出现一个实例时，单例对象就能派上用场。
+
+举例子：
+比如，某个服务器程序的配置信息存放在一个文件中，客户端通过一个 AppConfig 的类来读取配置文件的信息。
+如果在程序运行期间，有很多地方都需要使用配置文件的内容，也就是说，很多地方都需要创建 AppConfig 对象的实例，
+这就导致系统中存在多个 AppConfig 的实例对象，而这样会严重浪费内存资源，尤其是在配置文件内容很多的情况下。
+事实上，类似 AppConfig 这样的类，我们希望在程序运行期间只存在一个实例对象。
+
+总结：Python 的模块是天然的单例模式，这在大部分情况下应该是够用的，当然，我们也可以使用装饰器、元类等方法
+
+实现单例模式的方法：
+使用模块、使用__new__、使用装饰器、使用元类
+1.使用模块
+（我们只需把相关的函数和数据定义在一个模块中，就可以获得一个单例对象了。如果需要单例类，我们只需要声明一个类，然后实例化，再调用即可）
+解释：
+因为模块在第一次导入时，会生成 .pyc 文件，当第二次导入时，就会直接加载 .pyc 文件，而不会再次执行模块代码。（不会浪费内存资源）
+2.使用__new__
+代码：
+class Singleton(object):
+    _instance = None
+    def __new__(cls, *args, **kw):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kw)  
+        return cls._instance  
+ 
+class MyClass(Singleton):  
+    a = 1
+解释：在上面的代码中，我们将类的实例和一个类变量 _instance 关联起来，如果 cls._instance 为 None 则创建实例，
+否则直接返回 cls._instance。
+
+3.使用装饰器
+rom functools import wraps
+ 
+def singleton(cls):
+    instances = {}
+    @wraps(cls) #Python装饰器（decorator）在实现的时候，被装饰后的函数其实已经是另外一个函数了（函数名等函数属性会发生改变），为了不影响，Python的functools包中提供了一个叫wraps的decorator来消除这样的副作用。
+    def getinstance(*args, **kw):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kw)
+        return instances[cls]
+    return getinstance
+ 
+@singleton
+class MyClass(object):
+    a = 1
+解释：
+在上面，我们定义了一个装饰器 singleton，它返回了一个内部函数 getinstance，该函数会判断某个类是否在字典 instances 中，
+如果不存在，则会将 cls 作为 key，cls(*args, **kw) 作为 value 存到 instances 中，否则，直接返回 instances[cls]。
+
+4.使用元类
+控制类的过程
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+class MyClass(metaclass=Singleton):
+    pass

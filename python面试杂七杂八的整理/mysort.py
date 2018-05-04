@@ -34,10 +34,10 @@ def quick_sort(list,left,right): #从小到大
     low = left
     high = right
     while left < right:
-        while left < right and list[right] >= key:
+        while left < right and list[right] >= key:# 从 右向 做 找到小的就环位置
             right -= 1
         list[left] = list[right]
-        while left < right and list[left] <= key:
+        while left < right and list[left] <= key: 从做向右   找到大的 环卫值 
             left += 1
         list[right] = list[left]
     list[right] = key
