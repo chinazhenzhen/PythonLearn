@@ -1,0 +1,64 @@
+1.普通字符
+
+2.元字符（概括字符集）  eg:\d  #匹配一个字符 类似for循环 一个一个匹配
+
+3.字符集 [ ]：  [ ] 用来表示单个字符的取值范围,或关系
+a[cf]c     匹配出 acc 或者 afc   a c 作为定界   c f 是或的关系
+取反 ^
+a[^cf]c     不会匹配 acc afc
+取一段 -
+a[c-e]c   会匹配出 acc adc aec
+
+4.概括字符集：
+\d 等价 [0-9]    数字字符
+\D 等价 [^0-9]   非数字字符
+\w 等价 [A-Za-z0-9]  匹配字母和数字字符
+\W                   匹配非字母和数字字符
+\s                  匹配制表符（空白字符）
+.                   匹配换行符之外的所有字符
+
+5.数量词  { }用来表示单个字符的重复
+"python 1111java66php"
+[a-z]{3}  结果 pyt hon jav php   匹配3位长度的字母
+[a-z]{3,6}  结果 python java php   匹配3到6位的字母
+#贪婪 匹配 长度为 3 4 5 6的字符，能长就长
+[a-z]{3,6}?
+#非贪婪，能短就短
+6 * 匹配0次或者无限多次
+  + 匹配1次或者无限多次
+  ？匹配0次或者1次
+
+7.边界匹配（完全匹配）
+^\d{4,8}$    ^.....$ 用来完全匹配，检测整个字符串是不是满足相应的条件
+^  从字符串开始进行匹配
+$  从字符串末尾进行匹配
+
+8 组   （）且关系
+pythonpythonpythonpython
+(python){3}   python是一个组（你可以想象成，将一个字符串压缩成字符然后进行匹配）
+匹配结果 ： pythonpythonpython
+
+
+9. python re.findall函数
+re.findall('re',str,flag)
+flag 是一种匹配模式  re.I 忽略大小写
+
+10.python re.sub 函数
+re.sub("匹配表达式","替换字符串"，"待匹配字符串")
+把函数作为参数传到sub函数中
+eg
+import re
+s = "A8C3721D86"
+
+def convert(value):
+    matched = value.group()
+    if int(matched) >= 6:
+        return '9'
+    else:
+        return '0'
+
+r = re.sub('\d',convert,s)
+print(r)
+#A9C0900D99
+
+11 学习正则表达式的经验
