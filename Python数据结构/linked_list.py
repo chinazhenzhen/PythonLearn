@@ -5,6 +5,7 @@ class Node:
         self.next = None
 
 class LinkedList:
+    
     def __init__(self, node=None):
         self.head_node = node
 
@@ -14,6 +15,8 @@ class LinkedList:
         while now_node is not None:
             print (now_node.data)
             now_node = now_node.next
+
+
 
     def seek_node(self, data=None):
         #根据节点data查找节点
@@ -69,7 +72,6 @@ class LinkedList:
             # 记录前一个节点
             pre_node = tag_node
             tag_node = tag_node.next
-
 
 head = Node("ma")
 link = LinkedList(head)
